@@ -72,8 +72,20 @@ trait DetectObject {
     morhismImg.copyTo(work)
     Imgproc.findContours(work, contours, new Mat(), Imgproc.RETR_CCOMP, Imgproc.CHAIN_APPROX_SIMPLE)
 
+    import org.opencv.imgproc.Imgproc
+
+
+
     for (n <- 0 until contours.size()) {
       Imgproc.drawContours(frame, contours, n, new Scalar(0, 0, 255), 3)
+
+      val moments = Imgproc.moments(contours.get(n))
+      val centroid = new Point()
+      centroid.x = moments.get_m10 / moments.get_m00
+      centroid.y = moments.get_m01 / moments.get_m00
+
+      Core.circle(frame, centroid, 6, new Scalar(0, 0, 255 ))
+
     }
 
     (filteredImg, morhismImg)
