@@ -1,6 +1,6 @@
 import _root_.cats.syntax.either._
 
-package object sclib {
+package object utils {
 
   def pathOfResource(name: String): Either[String, String] =
     Option(getClass.getResource(name))
