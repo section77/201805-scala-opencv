@@ -4,7 +4,7 @@ import cats.implicits._
 import cats.effect._
 
 import org.opencv.core.Mat
-import org.opencv.highgui.VideoCapture
+import org.opencv.videoio.VideoCapture
 
 case class WebCam(val deviceId: Int) {
   private val capture = new VideoCapture(deviceId)

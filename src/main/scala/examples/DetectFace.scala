@@ -3,19 +3,23 @@ package examples
 import cats._
 import cats.effect.IO
 import cats.implicits._
+import examples.DetectObjectApp.cam
 import sclib.cats.effect._
 import org.opencv.core._
+import org.opencv.imgcodecs.Imgcodecs
+import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.CascadeClassifier
+
 import scala.concurrent.duration._
 import scalafx.application.{JFXApp, Platform}
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
 import scalafx.scene.image.ImageView
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scalafx.scene.control.Label
 import scalafx.scene.layout.VBox
-
-import sclib._
+import sclib.utils._
 import sclib.opencv._
 
 trait DetectFace {
@@ -28,7 +32,7 @@ trait DetectFace {
         val p2    = new Point(rect.x + rect.width, rect.y + rect.height)
         val color = new Scalar(0, 255, 0)
         /*_*/
-        IO(Core.rectangle(img, p1, p2, color)) /*_*/
+        IO(Imgproc.rectangle(img, p1, p2, color)) /*_*/
       }
     } yield faceDetections.length
 
@@ -68,7 +72,8 @@ object DetectFaceApp extends JFXApp with DetectFace with OpenCVApp {
   val cam = WebCam(deviceId = 1)
 
   val detectFace = for {
-    frame         <- cam.grabFrame()
+    frame <- IO(Imgcodecs.imread(unsafeExtractResource("/lena1.png")))
+    //frame         <- cam.grabFrame()
     numberOfFaces <- detectAndMarkFaces(frame)
   } yield
     Platform.runLater {

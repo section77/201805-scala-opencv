@@ -2,16 +2,15 @@ package bench
 
 import cats.effect.IO
 import examples.DetectFace
-import org.opencv.highgui.Highgui
+import org.opencv.imgcodecs.Imgcodecs
 import org.scalameter._
-
-import sclib._
+import sclib.utils._
 import sclib.opencv._
 
 object DetectFaceBench extends Bench.LocalTime with OpenCVApp with DetectFace {
 
   val detectFace = for {
-    img           <- IO(Highgui.imread(unsafePathOfResource("/lena1.png")))
+    img           <- IO(Imgcodecs.imread(unsafeExtractResource("/lena1.png")))
     numberOfFaces <- detectAndMarkFaces(img)
   } yield numberOfFaces
 

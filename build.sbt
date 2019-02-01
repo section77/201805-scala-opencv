@@ -1,9 +1,8 @@
-name := "sclib/cats/xopencv"
+name := "opencv-examples"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.7"
 
 
-//val opencvPath = "lib"
 val opencvPath = {
   val os = System.getProperty("os.name")
   if (os.equals("FreeBSD")) "/usr/local/share/OpenCV/java"
@@ -18,7 +17,22 @@ libraryDependencies ++= Seq(
   , "org.typelevel" %% "cats-effect" % "1.0.0-RC"
 )
 
-unmanagedJars in Compile += file(s"${opencvPath}/opencv-2413.jar")
+unmanagedJars in Compile += file(s"${opencvPath}/opencv-343.jar")
 
-scalacOptions += "-feature"
+javaOptions in run += s"-Djava.library.path=${opencvPath}"
+
+scalacOptions ++= Seq(
+  "-feature",
+  "-deprecation",
+  "-unchecked",
+  "-Xlint",
+  "-Ywarn-dead-code",
+  "-Ywarn-unused-import",
+  "-Ywarn-numeric-widen",
+  "-Ypartial-unification",
+  "-Ybackend-parallelism", "4"
+)
+
+
+
 scalacOptions += "-language:implicitConversions"

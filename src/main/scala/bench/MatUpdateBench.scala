@@ -2,16 +2,13 @@ package bench
 
 import org.opencv.core._
 import org.scalameter.api._
-
-import sclib._
 import sclib.opencv._
 
-object MatUpdateBench extends Bench.OfflineReport with OpenCVApp {
+object MatUpdateBench extends Bench.LocalTime with OpenCVApp {
 
   private val range = Gen.range("size")(200, 1401, 400)
 
-  performance of "Mat update" config (exec.jvmflags -> List(
-    "-Djava.library.path=/usr/local/share/OpenCV/java")) in {
+  performance of "Mat update" config (exec.jvmflags -> List("-Djava.library.path=./lib")) in {
 
     measure method "every cell" in {
       using(range) in { n =>

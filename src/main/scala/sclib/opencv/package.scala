@@ -5,8 +5,8 @@ import java.awt.image.{BufferedImage, DataBufferByte}
 import org.opencv.core.{Core, Mat}
 
 import scala.util.{Failure, Try}
-import scalafx.embed.swing.SwingFXUtils
-import scalafx.scene.image.WritableImage
+import _root_.scalafx.embed.swing.SwingFXUtils
+import _root_.scalafx.scene.image.WritableImage
 
 package object opencv {
 
@@ -19,7 +19,7 @@ package object opencv {
     lazy val channels = mat.channels
     lazy val cols     = mat.cols
     lazy val rows     = mat.rows
-    lazy val size     = channels * cols * rows
+    lazy val length   = channels * cols * rows
 
     def updated[A](f: Array[Byte] => A): Unit = {
       val buffer = getBytes
@@ -29,14 +29,14 @@ package object opencv {
 
     def getBytes: Array[Byte] = {
       // allocate a buffer and store the `Mat` content in it
-      val buffer = new Array[Byte](size)
+      val buffer = new Array[Byte](length)
       mat.get(0, 0, buffer)
       buffer
     }
 
     def setBytes(buffer: Array[Byte]): Try[Mat] = {
-      if (buffer.size != size)
-        Failure(new IllegalArgumentException(s"buffer size: ${buffer.size} != Mat size: ${size}"))
+      if (buffer.size != length)
+        Failure(new IllegalArgumentException(s"buffer size: ${buffer.size} != Mat size: ${length}"))
       else
         Try {
           mat.put(0, 0, buffer)
@@ -53,7 +53,7 @@ package object opencv {
       val imageData = image.getRaster.getDataBuffer.asInstanceOf[DataBufferByte].getData()
 
       // copy the buffer in the `BufferedImage`
-      System.arraycopy(getBytes, 0, imageData, 0, size)
+      System.arraycopy(getBytes, 0, imageData, 0, length)
 
       image
     }

@@ -2,12 +2,12 @@ package examples
 
 import java.util
 
-import org.opencv.highgui.Highgui
-
 import scala.concurrent.duration._
 import cats.effect._
 import org.opencv.core._
+import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scalafx.application.{JFXApp, Platform}
 import scalafx.application.JFXApp.PrimaryStage
@@ -16,8 +16,8 @@ import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.{Label, Slider, Tooltip}
 import scalafx.scene.image.ImageView
 import scalafx.scene.layout._
-
 import sclib._
+import sclib.utils._
 import sclib.cats.effect._
 import sclib.opencv._
 
@@ -72,19 +72,15 @@ trait DetectObject {
     morhismImg.copyTo(work)
     Imgproc.findContours(work, contours, new Mat(), Imgproc.RETR_CCOMP, Imgproc.CHAIN_APPROX_SIMPLE)
 
-    import org.opencv.imgproc.Imgproc
-
-
-
     for (n <- 0 until contours.size()) {
       Imgproc.drawContours(frame, contours, n, new Scalar(0, 0, 255), 3)
 
-      val moments = Imgproc.moments(contours.get(n))
+      val moments  = Imgproc.moments(contours.get(n))
       val centroid = new Point()
       centroid.x = moments.get_m10 / moments.get_m00
       centroid.y = moments.get_m01 / moments.get_m00
 
-      Core.circle(frame, centroid, 6, new Scalar(0, 0, 255 ))
+      Imgproc.circle(frame, centroid, 6, new Scalar(0, 0, 255))
 
     }
 
@@ -156,7 +152,10 @@ object DetectObjectApp extends JFXApp with DetectObject with OpenCVApp {
   val cam = WebCam(deviceId = 1)
 
   val detectObject = for {
-    frame <- IO(Highgui.imread(unsafePathOfResource("/circles.png"))) // cam.grabFrame()
+    //frame <- IO(Imgcodecs.imread(unsafeExtractResource("/circles.png")))
+    frame <- IO(Imgcodecs.imread(unsafeExtractResource("/tennis-ball.jpg")))
+
+    //frame <- cam.grabFrame()
     thresholds = Thresholds(sldBlur.getValue.toInt,
                             sldHue.minMax(),
                             sldSaturation.minMax(),
