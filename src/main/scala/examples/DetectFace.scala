@@ -22,7 +22,7 @@ import scalafx.scene.layout.VBox
 import sclib.utils._
 import sclib.opencv._
 
-trait DetectFace {
+trait DetectFace extends OpenCVApp {
 
   def detectAndMarkFaces(img: Mat): IO[Int] =
     for {
