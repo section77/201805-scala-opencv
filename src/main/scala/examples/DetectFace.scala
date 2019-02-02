@@ -37,7 +37,7 @@ trait DetectFace extends OpenCVApp {
     } yield faceDetections.length
 
   private val faceDetector = new CascadeClassifier(
-    unsafePathOfResource("/lbpcascade_frontalface.xml"))
+    unsafeExtractResource("/lbpcascade_frontalface.xml"))
 
   private def detectFaces(img: Mat): IO[List[Rect]] = IO {
     val faceDetections = new MatOfRect()
