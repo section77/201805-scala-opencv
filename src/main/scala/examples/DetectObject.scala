@@ -73,15 +73,19 @@ trait DetectObject {
     Imgproc.findContours(work, contours, new Mat(), Imgproc.RETR_CCOMP, Imgproc.CHAIN_APPROX_SIMPLE)
 
     for (n <- 0 until contours.size()) {
+      // draw contours
       Imgproc.drawContours(frame, contours, n, new Scalar(0, 0, 255), 3)
 
-      val moments  = Imgproc.moments(contours.get(n))
+      // center
       val centroid = new Point()
+      val moments  = Imgproc.moments(contours.get(n))
       centroid.x = moments.get_m10 / moments.get_m00
       centroid.y = moments.get_m01 / moments.get_m00
+      Imgproc.circle(frame, centroid, 4, new Scalar(0, 0, 255))
 
-      Imgproc.circle(frame, centroid, 6, new Scalar(0, 0, 255))
-
+      // area size
+      val area = Imgproc.contourArea(contours.get(0))
+      Imgproc.putText(frame, s"${area}", centroid, Core.FONT_HERSHEY_PLAIN, 1, new Scalar(0, 0, 0))
     }
 
     (filteredImg, morhismImg)
@@ -152,8 +156,8 @@ object DetectObjectApp extends JFXApp with DetectObject with OpenCVApp {
   val cam = WebCam(deviceId = 1)
 
   val detectObject = for {
-    //frame <- IO(Imgcodecs.imread(unsafeExtractResource("/circles.png")))
-    frame <- IO(Imgcodecs.imread(unsafeExtractResource("/tennis-ball.jpg")))
+    frame <- IO(Imgcodecs.imread(unsafeExtractResource("/circles.png")))
+    //frame <- IO(Imgcodecs.imread(unsafeExtractResource("/tennis-ball.jpg")))
 
     //frame <- cam.grabFrame()
     thresholds = Thresholds(sldBlur.getValue.toInt,
